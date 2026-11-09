@@ -1,0 +1,46 @@
+name: wva-brand-mcp
+services:
+  wva-brand-mcp:
+    image: ${WVA_BRAND_MCP_IMAGE:-wva-brand-mcp:local}
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    container_name: wva-brand-mcp
+    command: ["node", "src/http-server.mjs"]
+    restart: unless-stopped
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    mem_limit: 512m
+    cpus: 1.0
+    pids_limit: 128
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
+    expose: ["8082"]
+    environment:
+      NODE_ENV: production
+      HOST: 0.0.0.0
+      PORT: 8082
+      WVA_MCP_ALLOWED_HOSTS: ${WVA_MCP_PUBLIC_HOST:-wva-mcp.consumerchoicecenter.org},wva-brand-mcp,localhost,127.0.0.1
+      WVA_MCP_TRUST_PROXY_HOPS: 1
+      WVA_MCP_HTTP_BODY_LIMIT: 32mb
+      WVA_MCP_RATE_LIMIT_MAX: 120
+      WVA_MCP_MAX_CONCURRENCY: 8
+      WVA_MCP_REQUEST_TIMEOUT_MS: 30000
+      WVA_MCP_HEADERS_TIMEOUT_MS: 15000
+      WVA_MCP_KEEP_ALIVE_TIMEOUT_MS: 5000
+    healthcheck:
+      test: [CMD, node, -e, "require('http').get('http://127.0.0.1:8082/healthz',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+    logging:
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks: [archivebox_default]
+networks:
+  archivebox_default:
+    external: true

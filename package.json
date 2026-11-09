@@ -1,0 +1,47 @@
+{
+  "name": "wva-brand-mcp",
+  "version": "0.5.1",
+  "private": true,
+  "type": "module",
+  "description": "World Vapers Alliance brand MCP for English and German social and quote posts.",
+  "engines": {
+    "node": ">=22 <26"
+  },
+  "packageManager": "pnpm@11.25.0",
+  "license": "UNLICENSED",
+  "bin": {
+    "wva-brand-mcp": "src/server.mjs"
+  },
+  "scripts": {
+    "start": "node src/server.mjs",
+    "start:http": "node src/http-server.mjs",
+    "check": "node scripts/check.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "smoke": "node scripts/smoke-test.mjs",
+    "render:samples": "node scripts/render-samples.mjs",
+    "audit:assets": "node scripts/audit-assets.mjs",
+    "audit:prod": "pnpm audit --prod",
+    "test:visual": "node --test tests/visual.test.mjs",
+    "update:visual-baselines": "node scripts/update-visual-baselines.mjs",
+    "smoke:http": "node scripts/smoke-http.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.32.2",
+    "@resvg/resvg-js": "2.6.2",
+    "@xmldom/xmldom": "0.9.12",
+    "dictionary-de": "3.0.0",
+    "dictionary-en": "4.0.0",
+    "dictionary-en-gb": "3.0.0",
+    "express": "5.3.0",
+    "express-rate-limit": "8.7.3",
+    "fontkit": "2.0.4",
+    "helmet": "8.1.0",
+    "hyphen": "1.6.2",
+    "nspell": "2.1.5",
+    "zod": "4.6.6"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Consumer-Choice-Center/wva-brand-mcp.git"
+  }
+}

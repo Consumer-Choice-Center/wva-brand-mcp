@@ -1,0 +1,30 @@
+{
+  "source": "https://worldvapersalliance.com/about-us/#wva-team",
+  "verifiedOn": "2026-11-09",
+  "verification": "Official team page indexed by web search; direct request returned 403.",
+  "titlePolicy": "Official English titles are displayed by default, including German posts. German translations are optional descriptive translations, not verified official titles.",
+  "people": [
+    {
+      "id": "michael",
+      "fullName": "Michael Landl",
+      "title": "Director",
+      "titleDe": "Direktor",
+      "portraits": [
+        "michael-2.png",
+        "michael-3.png",
+        "michael-1.png"
+      ],
+      "defaultPortrait": "michael-2.png"
+    },
+    {
+      "id": "liza",
+      "fullName": "Liza Katsiashvili",
+      "title": "Director of Operations",
+      "titleDe": "Leiterin Operations",
+      "portraits": [
+        "liza.png"
+      ],
+      "defaultPortrait": "liza.png"
+    }
+  ]
+}

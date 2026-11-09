@@ -1,0 +1,9 @@
+{
+  "template": "quote",
+  "styleVariant": "quote_spotlight",
+  "person": "michael",
+  "headline": "This is sample wording to demonstrate the quote layout. Replace it with a verified quotation.",
+  "emphasis": "verified quotation",
+  "language": "en",
+  "mode": "draft"
+}

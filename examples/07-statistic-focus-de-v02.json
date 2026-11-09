@@ -1,0 +1,10 @@
+{
+  "template": "statistic",
+  "styleVariant": "statistic_focus",
+  "statisticValue": "1 von 3",
+  "headline": "Hier steht die Kernaussage",
+  "body": "Beispielzahl zur Gestaltung. Keine geprüfte Statistik.",
+  "label": "BEISPIEL",
+  "language": "de",
+  "mode": "draft"
+}

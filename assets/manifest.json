@@ -1,0 +1,285 @@
+{
+  "algorithm": "sha256",
+  "files": [
+    {
+      "path": "assets/fonts/Inter-VariableFont_opsz,wght.ttf",
+      "sha256": "0be2399ea925f1f83ff974764761da9860ec50742ed29a5d4c1ffd0c5c7ac3a8",
+      "bytes": 874708
+    },
+    {
+      "path": "assets/fonts/Inter_24pt-Bold.ttf",
+      "sha256": "9a2a0b55e203727936212904dedea502e678ba0d6c27851cab1f5eec3d23ef98",
+      "bytes": 344032
+    },
+    {
+      "path": "assets/fonts/Inter_24pt-SemiBold.ttf",
+      "sha256": "10238d4c2f85914e3899177426840bde80b078a612903066cf5c9afd17dbf023",
+      "bytes": 343640
+    },
+    {
+      "path": "assets/fonts/Lato-Bold.ttf",
+      "sha256": "bf1b8130069b44b9148eeece35e5423bedac49777ba746615b826b8276574a7b",
+      "bytes": 657188
+    },
+    {
+      "path": "assets/fonts/Lato-Light.ttf",
+      "sha256": "e9d59afb6d9cb9cf6e8d8159d4639d5b577e29efc64a15182f228659cfc1e818",
+      "bytes": 644556
+    },
+    {
+      "path": "assets/fonts/Lato-Medium.ttf",
+      "sha256": "be8bbf7105500e8fc1f9429307fb396905a0e6cff63fe1eb751bb319d0f1b0db",
+      "bytes": 637068
+    },
+    {
+      "path": "assets/fonts/Lato-Semibold.ttf",
+      "sha256": "2dc5d31e2cf1e29f3430eb2dfa1ba9911e08ee401b61dd12f40e0acb047a17a3",
+      "bytes": 669228
+    },
+    {
+      "path": "assets/fonts/inter-OFL.txt",
+      "sha256": "3c8d13d97ea5eb62868833a377034c6be6a9833e768d32abec2a767a8101e4bc",
+      "bytes": 4470
+    },
+    {
+      "path": "assets/fonts/lato-OFL.txt",
+      "sha256": "bac163b7ef3044511d80804165ff7ca3df6677da83ed32f21fa6c17041d6fa28",
+      "bytes": 4494
+    },
+    {
+      "path": "assets/graphics/quote-mark.json",
+      "sha256": "a8b0ca3225739b0e999b806404af9f7c2235a5cb5056c3396d6237a61ab0e6ac",
+      "bytes": 485
+    },
+    {
+      "path": "assets/images/reference-lifestyle.png",
+      "sha256": "a3d4fd651a8e19af3cfcbcc535e8d2600408b58efed878ad2bb4a6f882f4c761",
+      "bytes": 2604153
+    },
+    {
+      "path": "assets/images/reference-science.png",
+      "sha256": "d48f6b803a11dbefc07832e83e4b67a79d9587f312559afea2458271a89f4482",
+      "bytes": 288982
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_B.pdf",
+      "sha256": "f75db58e904a9d600e172e3c28212473b108b133bb752521a5b53bba3cf6d540",
+      "bytes": 83430
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_B.png",
+      "sha256": "65f28963186416a6abf6af40d1d746c79d735a8c318e15c8cf2eef00ddd5eeb3",
+      "bytes": 51633
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_B.svg",
+      "sha256": "a80a8fdca9c0ca9c4048fa10beb085571b2c4e5b6aed5aa95e60c0130305beb3",
+      "bytes": 8103
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_G.pdf",
+      "sha256": "3fd01072100425bdfac67b6eab252fabfc17091a7f84f3361f592c4e082b45df",
+      "bytes": 86288
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_G.png",
+      "sha256": "4ca384a30f14c6a61eed5e55d0e31aa6732be7e9dd0bc4d80b50e4564b96112e",
+      "bytes": 79218
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_G.svg",
+      "sha256": "2f7667939dc38d4c66a7f81035a477ba49328218d24765dfef682c01c2d778e5",
+      "bytes": 8424
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_W.pdf",
+      "sha256": "5ae9edf2c887510977d63f5c2767aa2d82122904315ae3ac5233f63526e7e94e",
+      "bytes": 83421
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_W.png",
+      "sha256": "340662e8864143699133b1764334096689568c5ef5457f50c72cddfb34a61a41",
+      "bytes": 48996
+    },
+    {
+      "path": "assets/logos/WVA_RB_Fist_W.svg",
+      "sha256": "7183c5eccd519ea4415aabedf0ec45e51e1d7c378e7bfbcafa1a6a65824d2fd7",
+      "bytes": 8100
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_B.pdf",
+      "sha256": "a10bfeccb276403b5c342eedc91e9e9ff7fca6d9d810a2bb3f6f3485de51f66a",
+      "bytes": 122980
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_B.png",
+      "sha256": "2ed5551aee4175726c7e62dd5a5c1baa96524447896caf4d312ac3da2dc0e913",
+      "bytes": 32548
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_B.svg",
+      "sha256": "cb7173a3ecc2e1b8b7be904155668a6f027365616d71bae3af4e9314f80651f9",
+      "bytes": 12372
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_G.pdf",
+      "sha256": "ee258eb1ac3d10c558277769f42bb3a4bcc45c056c8265f9df0627572b98e8d6",
+      "bytes": 89209
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_G.png",
+      "sha256": "a5194d0199d171fd2ebf08ac6905184f9b84d71d0cb5a6d8eb7c063f16126d69",
+      "bytes": 58994
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_G.svg",
+      "sha256": "3efa7cc0c3dd5904eb03e9ba2991f217be59d33c82f11edb1c546728cb44a983",
+      "bytes": 12262
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_W.pdf",
+      "sha256": "efcb456ba3d63c75a45d65a41fcb199d3f953521a84801852592141029be0144",
+      "bytes": 122980
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_W.png",
+      "sha256": "c4515355b2fb507fab440e5794a784d3c3a2841feaafe5e4513b850386c3eb4c",
+      "bytes": 30809
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_W.svg",
+      "sha256": "b29b2de10a82fe106f33407db9d24aedee98815e08667f7c7bf60df312545a5d",
+      "bytes": 12373
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_B.pdf",
+      "sha256": "e66046d7af82458a49381bfec32a6215cbe064e9c84d48cecd8909e1656f2e88",
+      "bytes": 122929
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_B.png",
+      "sha256": "15dba202b057e0a90b91c8cc92806d2dab4ea04a69beb0937d417ad419aa1ce7",
+      "bytes": 31464
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_B.svg",
+      "sha256": "2580c62a44ce61c09cc2374aeeaf26c95f27c76ac1844aeeef694809304b878b",
+      "bytes": 12143
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_G.pdf",
+      "sha256": "f4864b28fec60dfbcc899e74236571c603847b5c963b377f956048cdc69c65fa",
+      "bytes": 89016
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_G.png",
+      "sha256": "7de014c646ded281ecad00933dd0b67c50d162458a2a300953e59da16d6938ae",
+      "bytes": 55078
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_G.svg",
+      "sha256": "73685a554744b6a89ab2a3916f21d4200f978002e321951ccbfcc18899d161f8",
+      "bytes": 12015
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_W.pdf",
+      "sha256": "bd8098e361e2bf933ce2899e230c967b65bde902b45c35e7504392bfa92f264f",
+      "bytes": 122926
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_W.png",
+      "sha256": "480c74219021109a45752b8cac73f2bf9413d5965f8e49c3195496a0a3ddac6d",
+      "bytes": 29356
+    },
+    {
+      "path": "assets/logos/WVA_RB_Logo_Wide_W.svg",
+      "sha256": "c22fcf9b577418a9a1399e1c98e5413a45ceb159138fd2bdb471434da90d4418",
+      "bytes": 12122
+    },
+    {
+      "path": "assets/portraits/liza.png",
+      "sha256": "a0f0ca9444577ccafba1bb8c85cfb9db8cff935894174536db4fdb5b8a0d27bd",
+      "bytes": 5029727
+    },
+    {
+      "path": "assets/portraits/michael-1.png",
+      "sha256": "918aabd4568c1debdd16d692a563193092215e756ee2da0032249d4737c2f6b5",
+      "bytes": 189393
+    },
+    {
+      "path": "assets/portraits/michael-2.png",
+      "sha256": "95042806924b8988401ebe47359eef4bade8408e417fe02aa11a411a5f03f4a5",
+      "bytes": 4657373
+    },
+    {
+      "path": "assets/portraits/michael-3.png",
+      "sha256": "1434a2a90c49d1945567495dc48890bc7ba2afb356fad30d1e6df98b17d74bbb",
+      "bytes": 5256775
+    },
+    {
+      "path": "assets/references/WVA_BRANDING_Guidelines.pdf",
+      "sha256": "cdd19d2988e6d73673f660f4e0ee054afd143ee361edb33f66f3a7fd8a889c57",
+      "bytes": 4955275
+    },
+    {
+      "path": "assets/references/WVA_Quore_Ref1.svg",
+      "sha256": "0194bafd9dac5802e82c80a686486c5c1671a1c41097364641e69a344a3aaf1d",
+      "bytes": 7074890
+    },
+    {
+      "path": "assets/references/WVA_Quore_Ref2.svg",
+      "sha256": "94dc78e184ca7ac335b28bcea76a30a927575a60aea51f191d2df3b3f0e3cef5",
+      "bytes": 6291508
+    },
+    {
+      "path": "assets/references/WVA_Soc_Ref1.svg",
+      "sha256": "ab693601edc296bfe8e0db8d696e073e13beddbfbf946670dd97bd5703a2eb03",
+      "bytes": 409253
+    },
+    {
+      "path": "assets/references/WVA_Soc_Ref2.svg",
+      "sha256": "82fd18467be004e9b59e938a4ce398c1f3738d6d7d83fd0329334d885551fe08",
+      "bytes": 2733724
+    },
+    {
+      "path": "assets/references/WVA_Soc_Ref3.svg",
+      "sha256": "45f36953d99d22acda73e40b173f063c1c572cf6d0dd767634abdeff5ddc4989",
+      "bytes": 3496704
+    },
+    {
+      "path": "assets/references/cutout/1-Photo-1.jpg",
+      "sha256": "b66814d4ab78d25a7694e42f64daac80852b9ceb714992d1d4ab515982b9fb52",
+      "bytes": 140532
+    },
+    {
+      "path": "assets/references/cutout/2-Photo-2.jpg",
+      "sha256": "20ba0a860c35a71b28e2fe99ea53a2f6f3e501948a51a3bf0f98991a6ff146be",
+      "bytes": 155147
+    },
+    {
+      "path": "assets/references/cutout/3-Photo-3.jpg",
+      "sha256": "31fbf607809d4173d468fb5766e74f237ca002ade0bab60084c32e7a2dc317da",
+      "bytes": 250417
+    },
+    {
+      "path": "assets/references/cutout/4-Photo-4.jpg",
+      "sha256": "7fdd794387e8f73e0b13c5fa45b42af613486114e34f54dc5e69f9aa9868a964",
+      "bytes": 120918
+    },
+    {
+      "path": "assets/references/cutout/5-Photo-5.jpg",
+      "sha256": "ee9069d01638287b10c7f21cafecebf682625a9409477a0ee0a3f3b573bec27d",
+      "bytes": 286911
+    },
+    {
+      "path": "tests/fixtures/megaphone.jpg",
+      "sha256": "79bff412252f67f5ff253a8596c1bae8d5ddaf85c5121a95426116cfdc026477",
+      "bytes": 164715
+    },
+    {
+      "path": "tests/fixtures/megaphone.json",
+      "sha256": "aa78ce320ead4dee40c7e4b03eeeebcb093be27a51e15a5bd733608124727cf5",
+      "bytes": 4144
+    }
+  ]
+}

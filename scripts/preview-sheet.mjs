@@ -1,0 +1,10 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import {Resvg} from '@resvg/resvg-js';
+import {root} from '../src/assets.mjs';
+const names=['01-navy-poster-en','02-action-bands-de','06-teal-statement-en','07-statistic-focus-de','03-photo-editorial-en','08-photo-overlay-en','04-quote-michael-en','05-quote-liza-de'];
+const width=1440,height=900;
+const items=names.map((name,i)=>`<image x="${(i%4)*360+8}" y="${Math.floor(i/4)*450+8}" width="344" height="430" xlink:href="data:image/png;base64,${fs.readFileSync(path.join(root,'deliverables',name+'-v05.png')).toString('base64')}"/>`).join('');
+const svg=`<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}"><rect width="${width}" height="${height}" fill="#e8ebef"/>${items}</svg>`;
+fs.writeFileSync(path.join(root,'deliverables','wva-template-preview-v05.png'),new Resvg(svg).render().asPng());
+console.log('Saved eight-template preview.');

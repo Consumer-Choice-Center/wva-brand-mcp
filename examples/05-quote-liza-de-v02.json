@@ -1,0 +1,9 @@
+{
+  "template": "quote",
+  "styleVariant": "quote_panel",
+  "person": "liza",
+  "headline": "Dies ist ein Beispieltext für die Gestaltung. Hier steht später ein geprüftes Zitat.",
+  "emphasis": "geprüftes Zitat",
+  "language": "de",
+  "mode": "draft"
+}

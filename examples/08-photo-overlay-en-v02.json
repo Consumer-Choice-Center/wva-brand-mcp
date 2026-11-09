@@ -1,0 +1,12 @@
+{
+  "template": "photo",
+  "styleVariant": "photo_overlay",
+  "headline": "Our community. Our voice.",
+  "emphasis": "Our voice.",
+  "body": "Together, we make ourselves heard.",
+  "cta": "Join the conversation",
+  "language": "en",
+  "useReferenceImage": true,
+  "imageAlt": "User-supplied WVA reference photograph used for a layout demonstration.",
+  "mode": "draft"
+}

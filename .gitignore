@@ -1,0 +1,13 @@
+node_modules/
+deliverables/*
+!deliverables/.gitkeep
+inputs/*
+!inputs/.gitkeep
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.pnpm-store/
+*.log
+.DS_Store

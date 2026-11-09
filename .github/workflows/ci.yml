@@ -1,0 +1,62 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22, 24]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run check
+      - run: pnpm test
+      - run: pnpm run audit:assets
+      - run: pnpm run smoke
+      - run: pnpm run audit:prod
+  container:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.25.0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: docker compose -f deploy/docker-compose.yml config --quiet
+      - run: docker build -t wva-brand-mcp:ci .
+      - name: Start hardened HTTP container
+        run: >-
+          docker run -d --name wva-http-ci --read-only --tmpfs /tmp:size=32m
+          --cap-drop ALL --security-opt no-new-privileges --pids-limit 128
+          --memory 512m --cpus 1 -p 127.0.0.1:8082:8082
+          wva-brand-mcp:ci
+      - name: Check health and MCP protocol
+        run: |
+          for attempt in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:8082/healthz; then break; fi
+            sleep 2
+          done
+          node scripts/smoke-http.mjs http://127.0.0.1:8082/mcp
+      - name: Show container logs
+        if: always()
+        run: docker logs wva-http-ci || true
+      - name: Stop container
+        if: always()
+        run: docker rm -f wva-http-ci || true

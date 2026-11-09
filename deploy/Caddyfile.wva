@@ -1,0 +1,5 @@
+# Append this site to the existing Caddyfile. Retain CCC's site unchanged.
+# Proposed hostname: create its DNS record before enabling this site.
+wva-mcp.consumerchoicecenter.org {
+    reverse_proxy wva-brand-mcp:8082
+}

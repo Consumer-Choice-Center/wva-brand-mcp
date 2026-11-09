@@ -1,0 +1,12 @@
+.git
+.github
+node_modules
+deliverables
+inputs
+.env
+.env.*
+*.pem
+*.key
+*.log
+.DS_Store
+.pnpm-store

@@ -1,0 +1,11 @@
+{
+  "template": "photo",
+  "styleVariant": "photo_editorial",
+  "headline": "A community with a voice.",
+  "body": "People. Conversations. Shared experiences.",
+  "cta": "Meet the community",
+  "language": "en",
+  "useReferenceImage": true,
+  "imageAlt": "Supplied WVA reference photograph: a person carrying a WVA tote bag.",
+  "mode": "draft"
+}

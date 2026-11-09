@@ -1,0 +1,68 @@
+[
+  {
+    "id": "navy_poster",
+    "source": "WVA_Soc_Ref1.svg",
+    "uses": "Headline-led advocacy, statistics and general policy",
+    "image": "optional supplied image; reference science photo only by explicit opt-in"
+  },
+  {
+    "id": "action_bands",
+    "source": "WVA_Soc_Ref2.svg",
+    "uses": "Calls to action, petitions and advocacy",
+    "image": "official fist vector; original is flattened"
+  },
+  {
+    "id": "photo_editorial",
+    "source": "WVA_Soc_Ref3.svg",
+    "uses": "Inset photograph with a central white copy overlay",
+    "image": "caller-supplied photo required; reference lifestyle photo only by explicit opt-in"
+  },
+  {
+    "id": "quote_spotlight",
+    "source": "WVA_Quore_Ref1.svg",
+    "uses": "Bottom-anchored portrait with gradient, foreground quote and oversized cropped WVA lettering"
+  },
+  {
+    "id": "quote_panel",
+    "source": "WVA_Quore_Ref2.svg",
+    "uses": "Bottom-anchored portrait with gradient, foreground quote and reference quotation-mark background"
+  },
+  {
+    "id": "teal_statement",
+    "source": "WVA_Soc_Ref1.svg",
+    "uses": "Centered bold statement on teal with a cropped official fist",
+    "image": "vector background only",
+    "adaptation": "Additional guide-based variation authorized by the user"
+  },
+  {
+    "id": "statistic_focus",
+    "source": "WVA_Soc_Ref1.svg",
+    "uses": "Large statisticValue with centered explanatory headline",
+    "image": "cropped WVA typography and official fist",
+    "adaptation": "Additional guide-based variation authorized by the user"
+  },
+  {
+    "id": "photo_overlay",
+    "source": "WVA_Soc_Ref3.svg",
+    "uses": "Full-frame photo under gradient with central foreground copy",
+    "image": "caller-supplied photo required; reference lifestyle photo only by explicit opt-in",
+    "adaptation": "Additional guide-based variation authorized by the user"
+  },
+  {
+    "id": "topic_cutout",
+    "source": "assets/references/cutout/1-Photo-1.jpg through 5-Photo-5.jpg",
+    "uses": "Fresh topic-relevant isolated item, with centered, offset or colored-band composition",
+    "image": "Real photograph chosen for each topic, cropped around the subject, with subtle grain and white outline. No AI-generated subjects or fixed image assortment.",
+    "treatments": [
+      "color",
+      "greyscale"
+    ],
+    "defaultTreatment": "both",
+    "layouts": [
+      "centered",
+      "offset",
+      "bands"
+    ],
+    "workflow": "create_cutout_photo_brief \u2192 caller real-photo sourcing and masking \u2192 create_cutout_post"
+  }
+]

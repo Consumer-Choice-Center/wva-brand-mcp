@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "wva-brand": {
+      "command": "/absolute/path/to/node",
+      "args": ["/absolute/path/to/wva-brand-mcp/src/server.mjs"]
+    }
+  }
+}

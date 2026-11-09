@@ -1,0 +1,7 @@
+# Preserve the exact bytes covered by assets/manifest.json.
+assets/** -text
+tests/fixtures/** -text
+*.mjs text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
