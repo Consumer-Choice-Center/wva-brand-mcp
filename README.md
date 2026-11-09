@@ -1,56 +1,200 @@
 # WVA Brand MCP
 
-Local MCP server for **World Vapers’ Alliance social and quote posts**, version **0.5.1**. Every output is **1080 × 1350 (4:5)**, matching CCC’s standard social size. WVA keeps its own guide, official logos, typography, palette, portraits and reference layouts. English and German are supported. One-pagers are intentionally excluded.
+Strict Model Context Protocol server for World Vapers’ Alliance brand-guided generation.
 
-## Start locally
+It exposes the WVA brand guide as machine-readable resources and tools so an LLM can:
 
-Requires Node.js 22 or 24 and pnpm 11. This is a standalone package; it does not import CCC or CP code at runtime.
+- retrieve approved colors, fonts, logos, templates and speaker portraits
+- create social posts and quote graphics in English and German
+- prepare topic-specific sourcing briefs for real-photo cutouts
+- export editable SVGs, outlined SVGs, PNG previews and source JSON
+- review spelling and show corrections while preserving attributed quotations
+- validate brand rules, text fit, rendered readability and SVG structure
+
+## Brand Source
+
+Brand rules come from `assets/references/WVA_BRANDING_Guidelines.pdf`. The supplied social and quote SVGs provide composition references, adapted to CCC's standard social size.
+
+- Palette: Navy `#041A2C`, Teal `#26D4CB`, Blue `#419ED6`, Ultramarine `#4A4AFF`, Phlox `#EE13FF`, White `#FFFFFF`
+- Typography: Inter Semibold for headlines/subheads; Lato for body copy and CTAs
+- Social size: `1080 × 1350` (4:5)
+- Languages: English (`en`) and German (`de`)
+- Formats: social posts, speaker quotes and real-photo cutouts; one-pagers are outside this MCP's scope
+
+Official logo variants, approved portraits and licensed Inter/Lato font files are included. Arial is reserved by the guide for technical documents and is not used by the social renderer. Guide rules take precedence over incidental font/color differences in reference artwork.
+
+## Install
+
+Use Node.js 22 or 24 and the pinned pnpm version:
 
 ```sh
+npm install --global pnpm@11.25.0
+pnpm install --frozen-lockfile
+pnpm run audit:assets
+pnpm run smoke
+```
+
+No build step or private font configuration is needed. Install the bundled static fonts from `assets/fonts/` when editing SVG text in Illustrator.
+
+## Run
+
+```sh
+pnpm start
+```
+
+This starts the full stdio MCP server. Rendering and spelling review run locally without an API key or image-generation account. New photographs belong in `inputs/`; exports go to `deliverables/`, or a writable directory selected by `WVA_BRAND_OUTPUT_DIR`.
+
+## MCP Client Configuration
+
+Use this with Codex, Cursor or another MCP-capable client:
+
+```json
+{
+  "mcpServers": {
+    "wva-brand": {
+      "command": "node",
+      "args": ["/absolute/path/to/wva-brand-mcp/src/server.mjs"]
+    }
+  }
+}
+```
+
+Replace the path for your machine. Register WVA separately from CCC and CP. A TOML example is available in [examples/client-config.toml](examples/client-config.toml). Restart the connection after updates, then call `get_mcp_status` to verify the running version and asset health.
+
+## Remote HTTP mode
+
+Start the stateless, read-only Streamable HTTP service:
+
+```sh
+pnpm run start:http
+```
+
+Local MCP URL: `http://127.0.0.1:8082/mcp`. Health checks use `GET /healthz`.
+
+Proposed hosted connector URL, pending live deployment:
+
+```text
+https://wva-mcp.consumerchoicecenter.org/mcp
+```
+
+HTTP exposes **10 read-only tools and 5 resources**: status, guidelines, asset audit, templates, people, spelling review, design-spec validation, generation/sourcing briefs and Illustrator SVG structure checks. The **17-tool stdio server** adds layout QA, rendering and file/artifact validation. Public HTTP has no upload, rendering, download or server-path tools.
+
+Optional HTTP controls:
+
+- `HOST` and `PORT` — default `127.0.0.1:8082`
+- `WVA_MCP_ALLOWED_HOSTS` — Host header allowlist
+- `WVA_MCP_HTTP_BODY_LIMIT` — default `32mb` for SVG structure checks
+- `WVA_MCP_RATE_LIMIT_MAX` — default 120 requests per IP per minute
+- `WVA_MCP_MAX_CONCURRENCY` — default 8 simultaneous requests
+- `WVA_MCP_REQUEST_TIMEOUT_MS`, `WVA_MCP_HEADERS_TIMEOUT_MS`, `WVA_MCP_KEEP_ALIVE_TIMEOUT_MS`
+- `WVA_MCP_TRUST_PROXY_HOPS=1` — only behind the trusted Caddy proxy, with no published host port
+
+The public service is unauthenticated. Keep filesystem and rendering tools in the operator-controlled stdio transport; an authenticated hosted rendering service would require separate implementation.
+
+## Server Deployment
+
+WVA has its own checkout, container and port alongside CCC. GitHub publishing does not deploy the live service. See [shared-server setup](deploy/README.md) for DNS, Caddy, health checks and rollback.
+
+### Deploy from the repository
+
+```sh
+git clone https://github.com/Consumer-Choice-Center/wva-brand-mcp.git
+cd wva-brand-mcp
+npm install --global pnpm@11.25.0
 pnpm install --frozen-lockfile
 pnpm run check
 pnpm test
 pnpm run audit:assets
 pnpm run smoke
-pnpm start
 ```
 
-`start` uses stdio. Do not launch it as a public web service. No API key, image-generation account or network access is required at runtime. Rendering and spelling review run locally.
+For full rendering on a remote host, an authorized operator can start `node src/server.mjs` over `ssh -T`, using that host's input/output directories.
 
-Add the snippet from `examples/client-config.toml` to your MCP client's configuration with real absolute paths. `examples/client-config.json` covers clients using `mcpServers`. The parent CCC project configuration is the intended local registration location. Restart the client or open a new chat after configuration changes, then call `get_mcp_status` and verify `wva-brand-mcp`, version `0.5.1`, with a passing asset audit.
+### Docker
 
-## Templates
+```sh
+docker compose -f deploy/docker-compose.yml build
+docker compose -f deploy/docker-compose.yml up -d --wait
+```
 
-| Style | Source | Behavior |
-| --- | --- | --- |
-| `navy_poster` | Social reference 1 | Dark headline poster with teal emphasis, optional photo, CTA and official logo |
-| `action_bands` | Social reference 2 | Angled color bands over the official fist, or a supplied image |
-| `photo_editorial` | Social reference 3 | Inset photograph with a central white copy overlay |
-| `quote_spotlight` | Quote reference 1 | Bottom-anchored portrait, cropped oversized WVA lettering, gradient and foreground quote |
-| `quote_panel` | Quote reference 2 | Bottom-anchored portrait with the original large quotation marks, gradient and foreground quote |
+The Compose service runs HTTP on port 8082, joins the existing external `archivebox_default` network and publishes no host port. It uses a non-root process, a read-only filesystem and bounded resources. The image includes the required WVA fonts and assets.
 
-These are guide-compliant adaptations, not pixel-exact copies. Original canvases were approximately 3:4; these templates reflow to the requested 4:5 ratio without stretching logos, letters or portraits. Text outlined in the references is reconstructed as editable text. The guide overrides incidental reference colors and fonts. In particular, Inter Semibold handles headlines/subheads and Lato handles body/CTA text; Arial is reserved by the guide for technical applications and is not bundled or used here.
+Standalone Docker defaults to HTTP. To run full stdio instead, mount input/output directories and override the command with `node src/server.mjs`; use `-i`, not `-t`, for protocol traffic. Deployment and updates are manual and leave CCC's service independent.
 
-Social reference 2 is a flattened raster wrapped in SVG. Its original pointing-hand photograph and copy cannot be separately edited. The reusable action-band template uses the official fist vector instead; the complete original reference is retained unchanged. References 1 and 3 contain extracted photographs that are available only with explicit `useReferenceImage: true`. Never assume a demonstration photo is relevant to a new topic. Packaged examples opt into reference imagery only to demonstrate the supplied composition.
+## Resources
 
-`styleVariant: "auto"` uses deterministic weighted selection among semantically eligible layouts. `selectionMode: "auto"` chooses the strongest semantic match; the default `"diverse"` distributes eligible layouts reproducibly using `diversitySeed` and up to five `recentVariants` (oldest first). Quote layouts remain restricted to quotes, and photo posts route between the two photo layouts.
+- `brand://wva/guidelines` — authoritative WVA rules
+- `brand://wva/colors` — approved palette
+- `brand://wva/social-templates` — template library
+- `brand://wva/post-references` — compact composition/reference metadata
+- `brand://wva/quote-people` — approved speaker identities and portrait choices
 
-Three additional variations extend the same palette, typography and imagery: `teal_statement` (central navy/white copy on teal), `statistic_focus` (requires `template: "statistic"` and `statisticValue`), and `photo_overlay` (full-frame photograph with gradient and central copy). All social layouts allow foreground text to overlap decorative background elements.
+References return compact metadata rather than multi-megabyte SVG payloads.
 
-Version 0.5 uses the `wva-social-v4` composition contract, with larger body/CTA type and a larger photographic subject in centered and offset cutout layouts. Earlier outputs are preserved; regenerate their JSON source to a new filename to obtain the readability improvements and current validation.
+## Tools
 
-## Authoring workflow
+All tools below are available through stdio. The ten tools described in Remote HTTP mode are also available publicly.
 
-1. Read `get_brand_guidelines`.
-2. Prepare copy in `en` or `de`; verify factual claims and quote attribution yourself.
-3. Use `review_spelling` and show corrections. English accepts US and UK spelling. German uses `dictionary-de`; unfamiliar compounds and names may need human review or `approvedWords`. This is a spelling checker, not a grammar, translation or fact-checking service. Only a conservative list of known typos is automatically corrected. Other words receive suggestions. Attributed quotes are never automatically rewritten.
-4. Use `qa_social_layout` to check exact text fitting plus independent visual checks. If a long German compound cannot fit at any allowed size, German 1996 hyphenation patterns supply syllable breaks; source wording and emphasis remain intact. Quotes are not automatically hyphenated. Other overflow still fails instead of silently shrinking below minimum sizes or dropping words.
-5. Call `create_social_svg` or `create_quote_post`. The result contains compact paths to an editable SVG, PNG, outlined SVG and JSON source. The MCP refuses to overwrite existing files.
-6. Call `validate_svg_file` on the editable SVG, inspect the PNG, and deliver. To revise, edit the JSON source and regenerate to a new filename. Arbitrary geometry changes fail canonical validation.
+### `get_mcp_status`
 
-Drafts carry a visible `DRAFT` or `ENTWURF` label. Final quote posts require `quoteVerified: true`. Final statistics require URL sources and `factsVerified: true`. If spelling review flags intentional words, correct them, supply `approvedWords`, or explicitly acknowledge the review with `spellingAcknowledged: true`. These caller declarations do not make the server a factual verification service.
+Returns the running server name, version, transport, languages, dimensions and asset health. Local stdio also reports workspace and output directories. Expected version: **0.5.1**.
 
-### Social example
+### `get_brand_guidelines`
+
+Read before generation. Returns `all`, `colors`, `typography`, `logo`, `social`, `voice`, `photography` or `strictGenerationRules`.
+
+### `audit_brand_assets`
+
+Verifies official logo, reference, portrait and font hashes, including exact font identities.
+
+### `list_social_templates`
+
+Lists nine layouts, including seven social and two quote styles:
+
+| Style | Purpose |
+| --- | --- |
+| `navy_poster` | Dark headline poster with teal emphasis, optional photo and CTA |
+| `action_bands` | Angled color bands over the official fist or supplied imagery |
+| `photo_editorial` | Inset photograph with central foreground copy |
+| `teal_statement` | Central navy/white copy on teal |
+| `statistic_focus` | Statistic-led layout using `template: "statistic"` and `statisticValue` |
+| `photo_overlay` | Full-frame photograph with gradient and foreground copy |
+| `topic_cutout` | Real-photo item with grain and white outline; centered, offset or bands composition |
+| `quote_spotlight` | Bottom-anchored portrait, cropped WVA lettering, gradient and quote |
+| `quote_panel` | Bottom-anchored portrait, quotation marks, gradient and quote |
+
+Layouts adapt the supplied compositions to 4:5 without stretching text, portraits or logos. Oversized WVA background letters extend beyond the frame; foreground copy may overlap decorative elements.
+
+### `list_quote_people`
+
+Lists approved speaker IDs, official English names/titles and portrait choices:
+
+- `michael` — Michael Landl, Director
+- `liza` — Liza Katsiashvili, Director of Operations
+
+Packaged team metadata was checked against the WVA team page on November 9, 2026. English titles remain unchanged on German posts. Michael has three supplied portraits; the larger `michael-2.png` is the default, while `michael-1.png` is retained as a lower-resolution alternative.
+
+### `review_spelling`
+
+Reviews English US/UK or German copy. Only a conservative list of known typos is automatically corrected; other words receive suggestions. Show corrections to the user. German compounds and unfamiliar names can require human review or `approvedWords`. Quotes are never automatically rewritten. This is not translation, grammar checking or fact verification.
+
+### `validate_design_spec`
+
+Checks proposed social dimensions, vector colors, fonts and official logo choice before generation.
+
+### `create_generation_prompt`
+
+Prepares a WVA social/quote brief with brand rules and available templates. It does not create facts or pixels. The caller supplies imagery; use the real-photo sourcing workflow for cutouts.
+
+### `qa_social_layout`
+
+Checks exact text fitting and independent visual readability without writing files. English/German copy must fit the minimum sizes. German 1996 hyphenation patterns provide a fallback for long compounds; quotes are not automatically hyphenated, and source wording remains intact.
+
+Social body copy targets 50–56px, with a 42px minimum (44px on action bands). CTAs target 46–54px with a 40px minimum. Quote copy targets 60px with a 46px minimum. Overflow fails rather than silently dropping words or shrinking below the limits.
+
+### `create_social_svg`
+
+Creates editable SVG, PNG, outlined SVG and source JSON, returning compact local paths. Read guidelines, prepare and review copy, run layout QA, create, then validate the editable SVG and inspect its PNG.
 
 ```json
 {
@@ -65,7 +209,15 @@ Drafts carry a visible `DRAFT` or `ENTWURF` label. Final quote posts require `qu
 }
 ```
 
-### Quote example
+An explicit `styleVariant` wins. With `styleVariant: "auto"`, the default `selectionMode: "diverse"` distributes eligible layouts reproducibly using `diversitySeed` and up to five `recentVariants`. `selectionMode: "auto"` selects the strongest semantic match. Quotes stay within quote layouts.
+
+Drafts carry a visible `DRAFT` or `ENTWURF` label. Final statistics require URL sources and `factsVerified: true`. Resolve spelling findings, supply `approvedWords`, or explicitly acknowledge them with `spellingAcknowledged: true`.
+
+The current `wva-social-v4` composition contract uses larger body/CTA text and larger centered/offset cutout imagery. To migrate older outputs, regenerate their source JSON to a new filename.
+
+### `create_quote_post`
+
+Creates a quote with an approved portrait, official name/title and teal emphasis. Portraits extend to the bottom frame beneath a gradual navy overlay and foreground text. Heads retain breathing room; cropping never stretches the image.
 
 ```json
 {
@@ -78,9 +230,13 @@ Drafts carry a visible `DRAFT` or `ENTWURF` label. Final quote posts require `qu
 }
 ```
 
-Approved people: `michael` (Michael Landl, Director) and `liza` (Liza Katsiashvili, Director of Operations). Official English titles are displayed even on German posts. Team metadata is sourced from the WVA team page, checked November 9, 2026. Michael has three portrait choices; his larger `michael-2.png` is the default. `michael-1.png` is low resolution and retained as an optional supplied alternative.
+Final mode requires `quoteVerified: true` after the caller checks attribution. Demonstration wording is not a statement by the pictured person.
 
-### Real-photo item cutouts
+### `create_cutout_photo_brief`
+
+Prepares a topic-specific real-photo sourcing brief from the headline, body, topic and recent visual concepts. It does not generate an image or select from a fixed assortment.
+
+### `create_cutout_post`
 
 `topic_cutout` uses **actual photographs**, cropped around the relevant item, with subtle grain and a white silhouette outline. No generated subjects. It has three compositions: `centered`, `offset` (item can extend outside the frame), and `bands` (colored text strips over the item). `cutoutLayout: "auto"` varies composition reproducibly with `diversitySeed`.
 
@@ -96,27 +252,42 @@ Missing imagery returns `needs_source_photo` with a contextual brief without wri
 
 Run `node scripts/render-cutout-samples.mjs` to reproduce the actual-photo demonstrations after placing their originals in `inputs/`. Source URLs and credits are recorded in the script and output JSON. The rejected generated demonstrations are archived separately and must not be reused.
 
-### Images
+### `validate_svg_file`
+
+Validates generated editable SVGs by local `filePath`. Checks include original photo hashes, canonical composition, typography, independent visual QA and Illustrator-safe structure. Prefer this tool for generated artwork, especially large files. Keep original input images for later validation.
+
+### `validate_svg_artifact`
+
+Validates complete SVG markup against the canonical renderer. Use when the caller already has the full artifact; ordinary local workflows should use `validate_svg_file`.
+
+### `validate_visual_svg`
+
+Independently examines finished editable SVGs without trusting template metadata or the renderer's fit report. Checks transformed glyph bounds, text-line intersections, visibility and contrast over the composited background. The project target is at least 4.5:1 contrast for at least 95% of opaque glyph samples per line. Decorative background WVA lettering is excluded.
+
+The same checks run during layout QA and canonical validation; creation rejects violations before saving. A photo may require another crop or layout to provide readable contrast. This is a readability check, not complete accessibility certification.
+
+The standalone `validate_visual_svg` checker does not fully interpret edited SVG inline text styles or positional attributes such as `dx` and positioned `tspan` elements. Such edits can receive a false pass. Use `validate_svg_file` or `validate_svg_artifact` for generated artwork: their canonical comparison rejects these changes. Regenerate the JSON source for edits, and inspect PNGs. Native Adobe Illustrator import has not been tested.
+
+### `validate_illustrator_svg`
+
+Checks SVG 1.1 structure, approved editable fonts, inline official logos and embedded PNG/JPEG imagery. Rejects scripts, external links and unsupported browser features. It checks file structure; native Adobe Illustrator import has not been automated.
+
+## Assets
+
+- `assets/logos/` — official wide, stacked and fist logo variants
+- `assets/fonts/` — Inter and Lato binaries with SIL Open Font Licenses
+- `assets/references/` — authoritative PDF, social/quote SVGs and cutout direction references
+- `assets/manifest.json` — source asset integrity hashes
+- `data/brand.json` — brand rules
+- `data/templates.json` — template profiles
+- `data/people.json` — speaker metadata and portrait choices
+- `examples/` — client configuration and content examples
 
 Put new PNG/JPEG images in `inputs/`, then pass a relative `imageFile`, such as `campaign.png`, plus descriptive `imageAlt`. Absolute paths are accepted only when they resolve inside that directory. Symlink escapes are rejected. The photo layout returns `needs_image` without writing when no image is supplied. The caller generates or selects imagery; this MCP does not call an image model.
 
 Portraits fill to the bottom edge beneath a gradual navy overlay. Heads retain top breathing room; sides can be cropped to fill the frame, without stretching. Photo-editorial images fill a rounded rectangle and may be cropped; choose suitable framing. Embedded raster colors are exempt from the vector palette. Supplied logo geometry is preserved unchanged, including native gradient stops.
 
-## Readability and independent checks
-
-Social body copy now targets 50–56 px, with a 42 px minimum (44 px on action bands). CTAs target 46–54 px with a 40 px minimum. Quote copy targets 60 px with a 46 px minimum; names and titles are larger too. Longer copy must fit these readable limits or be shortened. Centered/offset cutout subjects use a 680 px image field when a CTA is present, compared with 475 px previously, with upper copy moved up to reduce empty space.
-
-Blue and pink bands use navy text; ultramarine bands retain white text. Emphasis on bands uses teal over a navy backing. White emphasis on the teal layout has a navy backing too. Quote gradients protect the lower foreground copy while keeping the portrait visible through the bottom of the frame.
-
-`validate_visual_svg` examines a finished editable SVG without calling the template renderer or trusting its metadata/fit reports. It checks actual glyph bounds against the frame, text-line intersections after rotation/transforms, and contrast in the final composited image against the scene without foreground text, including photographs, gradients and emphasis backings. Hidden text, clipping, low opacity and later covering layers are checked against an ideal glyph mask; missing glyph samples fail validation. Its conservative project target is at least 4.5:1 for at least 95% of opaque glyph samples per line. These are readability checks, not a complete accessibility certification. Background WVA letters are intentionally excluded from foreground checks.
-
-The same independent checks run in `qa_social_layout` and `validate_svg_file`; creation rejects violations before writing. A source image with insufficient contrast can therefore require another crop or layout. Subject relevance, photographic authenticity, cropping aesthetics and overall balance still require visual review. Illustrator import remains structurally checked, not tested in Adobe itself.
-
-`pnpm run test:visual` exercises deliberate low-contrast, overlap, off-frame, hidden and covered-text mutations and compares 16 rendered cases across all nine layouts with reviewed PNG baselines. This includes all three real-photo cutout compositions in color and greyscale. The public-domain photograph and its credit, source URL and traced mask are bundled in `tests/fixtures/` and hash-audited; they are test fixtures, not a runtime image catalogue. Tests never update their own expectations. After an intentional visual change, use `pnpm run update:visual-baselines`, inspect `tests/visual-baselines/review-sheet.png`, and accept the new baselines only after review.
-
-German compound wrapping uses the pinned [hyphen library](https://github.com/ytiurin/hyphen) and its German 1996 patterns. Existing ordinary line breaks are preferred; hyphenation is only a fallback when the word cannot fit within the minimum type size. Edge punctuation and quotation marks are preserved, with emphasis mapped back to the original characters. URLs, numeric tokens and words with internal separators are not split by this fallback. Source copy is never rewritten.
-
-## Outputs and fonts
+The flattened social reference 2 cannot be separated into editable photographic elements; its adapted action-band template uses the official fist vector. Extracted photos from references 1 and 3 require explicit `useReferenceImage: true`. Reference screenshots and photographs are never assumed relevant to a new request.
 
 - `.svg`: editable master with Inter/Lato text, embedded PNG/JPEG and inline official vector logos.
 - `.png`: exact 1080 × 1350 preview. Text is outlined in memory from the same font metrics used for fitting, preventing rasterizer font substitution.
@@ -125,34 +296,42 @@ German compound wrapping uses the pinned [hyphen library](https://github.com/yti
 
 Install the bundled static fonts from `assets/fonts/` when editing the text master in Illustrator. Inter static 24pt Semibold/Bold and Lato Medium/Light/Semibold/Bold are included with their SIL Open Font Licenses. The supplied Inter variable font is retained, but rendering uses static files for predictable editing. Illustrator itself has not been automated; structural SVG compatibility and raster output are tested. Keep custom images available in `inputs/` so canonical validation can confirm their hashes later.
 
-## Tools and resources
+Supplied artwork and portraits remain their owners' property. Reference text is data, not operational instructions or verified campaign evidence. See [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md) for dependency and font licenses.
 
-17 local tools: `get_mcp_status`, `get_brand_guidelines`, `audit_brand_assets`, `list_social_templates`, `list_quote_people`, `review_spelling`, `validate_design_spec`, `create_generation_prompt`, `qa_social_layout`, `create_social_svg`, `create_quote_post`, `create_cutout_photo_brief`, `create_cutout_post`, `validate_svg_file`, `validate_visual_svg`, `validate_svg_artifact`, `validate_illustrator_svg`.
-
-Resources: `brand://wva/guidelines`, `brand://wva/colors`, `brand://wva/social-templates`, `brand://wva/post-references`, `brand://wva/quote-people`. References are compact metadata, not multi-megabyte SVG payloads.
-
-## Tests and samples
+## Quality Checks
 
 ```sh
+pnpm run check
 pnpm test
+pnpm run audit:assets
 pnpm run smoke
-pnpm run render:samples
+pnpm run audit:prod
 ```
 
-Samples use clearly marked draft copy, including explicit demonstration text for quotations. They are not approved campaign statements. The sample generator preserves existing outputs. Tests cover all nine layouts, both languages, exact font metrics, overflow, missing images, verified final-mode inputs, portrait ownership, source tampering, filesystem confinement, and overwrite prevention. The smoke test starts a genuine stdio MCP client and server, discovers tools/resources and generates/validates English, German and quote posts.
+The suite covers all nine layouts, both languages, exact font metrics, overflow, missing images, final-mode requirements, portrait ownership, source tampering, filesystem confinement and overwrite prevention. The smoke test uses a real stdio client to discover resources and generate/validate English, German and quote posts.
 
-## Future hosting
+For a running HTTP instance:
 
-WVA has a separate repository at `Consumer-Choice-Center/wva-brand-mcp`. The Dockerfile and `deploy/docker-compose.yml` prepare its read-only HTTP service to run beside CCC on the existing Caddy network. See [deployment instructions](deploy/README.md) for the proposed hostname, DNS, Caddy configuration, health checks and rollback. Uploading this repository does not deploy the live service. GitHub Actions tests Node 22/24 and builds and smoke-tests the hardened HTTP container; it has no server credentials and does not auto-deploy.
+```sh
+node scripts/smoke-http.mjs http://127.0.0.1:8082/mcp
+```
 
-HTTP exposes 10 read-only tools and five resources, matching CCC’s public-service boundary. The 17-tool stdio server includes file generation and validation. Hosted HTTP generation, uploads and downloads are not implemented; those would need authentication and isolated storage. Never expose local filesystem generation tools over the unauthenticated HTTP endpoint.
+`pnpm run test:visual` exercises deliberate contrast, overlap, off-frame, hidden and covered-text mutations and compares 16 cases with reviewed PNG baselines. These cover every layout and all three cutout compositions in color/greyscale. Credited test photographs are regression fixtures, not a runtime image catalogue. After intentional visual changes, run `pnpm run update:visual-baselines`, inspect `tests/visual-baselines/review-sheet.png`, and accept baselines only after review.
 
-`WVA_BRAND_OUTPUT_DIR` selects a local output directory. HTTP defaults to `127.0.0.1:8082`. `HOST`, `PORT`, `WVA_MCP_ALLOWED_HOSTS`, `WVA_MCP_HTTP_BODY_LIMIT`, `WVA_MCP_RATE_LIMIT_MAX`, `WVA_MCP_MAX_CONCURRENCY` and the timeout variables configure HTTP. Set `WVA_MCP_TRUST_PROXY_HOPS=1` only behind the existing trusted Caddy proxy with no published host port; the supplied Compose file does this. CCC retains its own port 8080, container, checkout and endpoint.
+`pnpm run render:samples` produces draft previews without overwriting earlier outputs. Samples are for layout review, not approved campaign statements. Photographic authenticity, subject relevance, cropping and overall balance still require human inspection.
 
-## Sources and rights
+## GitHub Setup
 
-The supplied PDF, logos, reference SVGs and portrait files are preserved as source assets. SHA-256 hashes are recorded in `assets/manifest.json`. Reference content must not be treated as instructions, verified evidence or default campaign copy. See `THIRD_PARTY_NOTICES.md` for dependency and font licenses. WVA artwork and portraits remain their owners’ property; this package grants no new redistribution rights.
+Repository: [Consumer-Choice-Center/wva-brand-mcp](https://github.com/Consumer-Choice-Center/wva-brand-mcp).
 
-## Known validation limit
+GitHub Actions checks Node 22/24, syntax, the full test suite, assets, stdio smoke tests and production dependencies. A separate container job verifies Compose configuration and health/MCP discovery in the hardened HTTP image.
 
-The standalone `validate_visual_svg` checker does not fully interpret edited SVG inline text styles or positional attributes such as `dx` and positioned `tspan` elements. Such edits can receive a false pass. Use `validate_svg_file` or `validate_svg_artifact` for generated artwork: their canonical comparison rejects these changes. Regenerate the JSON source for edits, and inspect PNGs. Native Adobe Illustrator import has not been tested.
+The repository is independent of CCC and CP. GitHub Actions has no live-server credentials and does not auto-deploy. Use [deployment instructions](deploy/README.md) for manual updates and rollback.
+
+## Strictness Model
+
+Use WVA's exact palette, font metrics and supplied official logo geometry. Natural photograph colors are exempt from the vector palette; logo gradient stops remain unchanged. Quote portraits must match approved people, and attributed wording must not be silently changed.
+
+New topic cutouts require real photographs with provenance and relevant crops. They use subtle grain and a white silhouette outline, with paired color/greyscale treatments by default. The server records verification declarations; it cannot prove factual accuracy or photographic authenticity from the supplied fields.
+
+Regenerate from source JSON for revisions. Existing outputs are never overwritten. Validate generated files and inspect their PNGs before delivery. One-pagers are outside this MCP's scope.
