@@ -22,8 +22,8 @@ test('loopback HTTP health, protocol and restricted tool discovery',async()=>{
     await client.connect(new StreamableHTTPClientTransport(new URL(base+'/mcp')));
     const tools=(await client.listTools()).tools;
     assert.ok(tools.some(t=>t.name==='review_spelling'));
-    assert.ok(!tools.some(t=>/create_social|create_quote|validate_svg_file|qa_social/.test(t.name)));
-    for(const tool of tools)assert.ok(tool.annotations.readOnlyHint);
+    assert.ok(!tools.some(t=>/create_social|validate_svg_file|qa_social/.test(t.name)));
+    for(const tool of tools)assert.equal(tool.annotations.readOnlyHint,tool.name!=='create_quote_post');
   }finally{await client.close();await new Promise(resolve=>server.close(resolve));}
 });
 

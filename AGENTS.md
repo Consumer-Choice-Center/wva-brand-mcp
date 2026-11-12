@@ -16,3 +16,5 @@
 - Topic cutouts must use actual photographs chosen for each topic, never generated subjects or a fixed image assortment. Use create_cutout_photo_brief, record source/license and credit, trace cropPolygon/cropHoles (or supply a transparent photo cutout), then create_cutout_post. Apply subtle grain and a white silhouette outline. Default to matching color/greyscale exports; keep WVA colors intact.
 
 - Run independent visual QA before saving: foreground glyph bounds, text collisions and raster contrast. Use navy on blue/pink bands and navy-backed emphasis. Preserve prior outputs when migrating to wva-social-v4. Never auto-update visual baselines in tests; inspect the review sheet after intentional updates.
+
+- HTTP quote rendering is authorized. Use approved portraits, isolated workers and bounded expiring downloads; no arbitrary filesystem paths or general file-write tools.

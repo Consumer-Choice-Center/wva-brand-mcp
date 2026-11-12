@@ -11,7 +11,7 @@ Both services join the existing external `archivebox_default` network used by Ca
 
 ## Tool availability
 
-Like CCC, public WVA HTTP is stateless and read-only. It exposes guidelines, assets audit, templates, people, spelling review, design-spec validation, generation/sourcing briefs, and Illustrator SVG structure checks: 10 tools and five resources. It has no upload, server-path, generation or download tools. Local stdio has the full 17-tool surface and renders PNG/SVG files. For full rendering on the server, an authorized operator can use stdio through SSH with their own input/output directories. An authenticated, isolated hosted rendering/download service would be a separate implementation.
+HTTP exposes **11 tools and five resources**, including `create_quote_post` with approved portraits, an inline PNG preview and temporary PNG/SVG downloads. Local stdio retains all 17 tools. General social creation and filesystem access remain local. See [HTTP quotes](../docs/http-quotes.md).
 
 ## Bootstrap
 
@@ -70,3 +70,7 @@ WVA_BRAND_MCP_IMAGE=wva-brand-mcp:previous docker compose -f deploy/docker-compo
 ```
 
 The image runs as `node`, with a read-only filesystem, bounded CPU/memory/process count, rotating logs and no credentials or runtime inputs baked in. Caddy is the single trusted proxy hop; do not publish port 8082 to the host while proxy-header trust is enabled. Default local HTTP binds to loopback without proxy-header trust.
+
+## HTTP quote downloads
+
+The Compose configuration sets `WVA_MCP_PUBLIC_BASE_URL` to the HTTPS origin. Caddy must proxy the entire host, including `/artifacts/`; the supplied fragment already does. Quote renders use one isolated worker at a time and a 64 MiB in-memory artifact store. Links expire after one hour and disappear on restart; no output volume is needed. The service uses a 768 MiB memory limit for rendering. After deploying, refresh the Claude connector to rediscover `create_quote_post`, then run the HTTP smoke script.
