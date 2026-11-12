@@ -1,3 +1,5 @@
+import {remoteQuoteService} from './remote-quote.mjs';
+import {artifactRoutes,publicOrigin} from './http-artifacts.mjs';
 import express from 'express';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
@@ -9,14 +11,19 @@ import {createBrandMcpServer} from './mcp-factory.mjs';
 const positiveInteger=(value,fallback)=>Number.isSafeInteger(Number(value))&&Number(value)>0?Number(value):fallback;
 export function createHttpApp(options={}) {
   const app=express();
+  const quoteService=options.quoteService??remoteQuoteService();
+  const configuredOrigin=options.publicBaseUrl??process.env.WVA_MCP_PUBLIC_BASE_URL;
+  const base=configuredOrigin?publicOrigin(configuredOrigin):null;
+  app.locals.quoteService=quoteService;
   // Only enable this behind the single trusted Caddy hop; never publish the
   // container port when trusting proxy headers.
   app.set('trust proxy',options.trustProxyHops??(process.env.WVA_MCP_TRUST_PROXY_HOPS==='1'?1:false));
   app.disable('x-powered-by');
   app.use(helmet());
   app.use(hostHeaderValidation(options.allowedHosts??(process.env.WVA_MCP_ALLOWED_HOSTS||'localhost,127.0.0.1,[::1]').split(',').map(s=>s.trim()).filter(Boolean)));
-  app.get('/healthz',(_req,res)=>res.json({ok:true,server:'wva-brand-mcp',transport:'read-only-http'}));
-  app.use('/mcp',rateLimit({windowMs:60_000,limit:options.rateLimitMax??positiveInteger(process.env.WVA_MCP_RATE_LIMIT_MAX,120),standardHeaders:'draft-8',legacyHeaders:false}));
+  app.get('/healthz',(_req,res)=>res.json({ok:true,server:'wva-brand-mcp',transport:'http'}));
+  app.use(['/mcp','/artifacts'],rateLimit({windowMs:60_000,limit:options.rateLimitMax??positiveInteger(process.env.WVA_MCP_RATE_LIMIT_MAX,120),standardHeaders:'draft-8',legacyHeaders:false}));
+  artifactRoutes(app,quoteService.store);
   let inFlight=0;
   const maxConcurrency=options.maxConcurrency??positiveInteger(process.env.WVA_MCP_MAX_CONCURRENCY,8);
   // Bound parsed request bodies as well as protocol requests.
@@ -28,7 +35,7 @@ export function createHttpApp(options={}) {
   });
   app.use('/mcp',express.json({limit:options.bodyLimit??process.env.WVA_MCP_HTTP_BODY_LIMIT??'32mb',type:['application/json','application/*+json']}));
   app.post('/mcp',async(req,res)=>{
-    const server=createBrandMcpServer('remote'),transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined});
+    const server=createBrandMcpServer('remote',{quoteService,publicBaseUrl:base??`${req.protocol}://${req.get('host')}`}),transport=new StreamableHTTPServerTransport({sessionIdGenerator:undefined});
     let closed=false;
     const close=async()=>{if(closed)return;closed=true;await Promise.allSettled([transport.close(),server.close()]);};
     res.once('close',()=>void close());
@@ -40,7 +47,7 @@ export function createHttpApp(options={}) {
   return app;
 }
 if(process.argv[1]&&pathToFileURL(process.argv[1]).href===import.meta.url){
-  const server=createHttpApp().listen(positiveInteger(process.env.PORT,8082),process.env.HOST||'127.0.0.1',()=>console.log('WVA read-only HTTP MCP listening.'));
+  const server=createHttpApp().listen(positiveInteger(process.env.PORT,8082),process.env.HOST||'127.0.0.1',()=>console.log('WVA HTTP MCP listening.'));
   server.requestTimeout=positiveInteger(process.env.WVA_MCP_REQUEST_TIMEOUT_MS,30_000);
   server.headersTimeout=positiveInteger(process.env.WVA_MCP_HEADERS_TIMEOUT_MS,15_000);
   server.keepAliveTimeout=positiveInteger(process.env.WVA_MCP_KEEP_ALIVE_TIMEOUT_MS,5_000);

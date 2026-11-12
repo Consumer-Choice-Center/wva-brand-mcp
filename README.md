@@ -63,7 +63,7 @@ Replace the path for your machine. Register WVA separately from CCC and CP. A TO
 
 ## Remote HTTP mode
 
-Start the stateless, read-only Streamable HTTP service:
+Start the Streamable HTTP service with quote rendering:
 
 ```sh
 pnpm run start:http
@@ -77,7 +77,7 @@ Proposed hosted connector URL, pending live deployment:
 https://wva-mcp.consumerchoicecenter.org/mcp
 ```
 
-HTTP exposes **10 read-only tools and 5 resources**: status, guidelines, asset audit, templates, people, spelling review, design-spec validation, generation/sourcing briefs and Illustrator SVG structure checks. The **17-tool stdio server** adds layout QA, rendering and file/artifact validation. Public HTTP has no upload, rendering, download or server-path tools.
+HTTP exposes **11 tools and 5 resources**: status, guidelines, asset audit, templates, people, spelling review, design-spec validation, generation/sourcing briefs and Illustrator SVG structure checks, plus `create_quote_post`. The **17-tool stdio server** adds layout QA, rendering and file/artifact validation. HTTP quotes use approved packaged portraits and return an inline preview plus downloadable PNG/SVG files. Other artwork creation and server-file validation stay local.
 
 Optional HTTP controls:
 
@@ -89,7 +89,9 @@ Optional HTTP controls:
 - `WVA_MCP_REQUEST_TIMEOUT_MS`, `WVA_MCP_HEADERS_TIMEOUT_MS`, `WVA_MCP_KEEP_ALIVE_TIMEOUT_MS`
 - `WVA_MCP_TRUST_PROXY_HOPS=1` — only behind the trusted Caddy proxy, with no published host port
 
-The public service is unauthenticated. Keep filesystem and rendering tools in the operator-controlled stdio transport; an authenticated hosted rendering service would require separate implementation.
+The public service is unauthenticated. Quote rendering runs in isolated workers with bounded, temporary downloads. Arbitrary filesystem tools remain available only through operator-controlled stdio.
+
+Set `WVA_MCP_PUBLIC_BASE_URL` to the public HTTPS origin so download links use the correct domain behind Caddy. [HTTP quote workflow](docs/http-quotes.md) covers examples, delivery and limits.
 
 ## Server Deployment
 
@@ -133,11 +135,11 @@ References return compact metadata rather than multi-megabyte SVG payloads.
 
 ## Tools
 
-All tools below are available through stdio. The ten tools described in Remote HTTP mode are also available publicly.
+All tools below are available through stdio. The eleven tools described in Remote HTTP mode are also available publicly.
 
 ### `get_mcp_status`
 
-Returns the running server name, version, transport, languages, dimensions and asset health. Local stdio also reports workspace and output directories. Expected version: **0.5.1**.
+Returns the running server name, version, transport, languages, dimensions and asset health. Local stdio also reports workspace and output directories. Expected version: **0.6.0**.
 
 ### `get_brand_guidelines`
 
@@ -217,7 +219,7 @@ The current `wva-social-v4` composition contract uses larger body/CTA text and l
 
 ### `create_quote_post`
 
-Creates a quote with an approved portrait, official name/title and teal emphasis. Portraits extend to the bottom frame beneath a gradual navy overlay and foreground text. Heads retain breathing room; cropping never stretches the image.
+Available through both stdio and HTTP. HTTP returns an inline PNG preview and expiring download links; see [HTTP quote workflow](docs/http-quotes.md). Creates a quote with an approved portrait, official name/title and teal emphasis. Portraits extend to the bottom frame beneath a gradual navy overlay and foreground text. Heads retain breathing room; cropping never stretches the image.
 
 ```json
 {
